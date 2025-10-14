@@ -18,6 +18,8 @@
                       ee_id:=none
                       special_connection:=''
                       gazebo:='false'
+                      isaac:='false'
+                      namespace:=''
                       with_sc:='false'
                       ros2_control:=false
                       robot_ip:=''
@@ -161,6 +163,8 @@
           use_fake_hardware="${use_fake_hardware}"
           fake_sensor_commands="${fake_sensor_commands}"
           gazebo="${gazebo}"
+          isaac="${isaac}"
+          namespace="${namespace}"
           hand="${hand}"
           gazebo_effort="${gazebo_effort}"
           arm_prefix="${arm_prefix}"

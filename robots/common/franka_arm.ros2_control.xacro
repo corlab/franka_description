@@ -7,6 +7,8 @@
                  use_fake_hardware:=false
                  fake_sensor_commands:=false
                  gazebo:=false
+                 isaac:=false
+                 namespace:=franka_ns
                  hand:=false
                  gazebo_effort:=false
                  arm_prefix:=''">
@@ -17,14 +19,27 @@
           <param name="version">0.1.0</param>
           <param name="arm_id">${arm_id}</param>
           <param name="prefix">${arm_prefix}</param>
-          <xacro:if value="${use_fake_hardware}">
-            <plugin>fake_components/GenericSystem</plugin>
+          <xacro:if value="${use_fake_hardware and isaac == 0}">
+            <plugin>mock_components/GenericSystem</plugin>
             <param name="fake_sensor_commands">${fake_sensor_commands}</param>
             <param name="state_following_offset">0.0</param>
           </xacro:if>
 
           <xacro:if value="${gazebo}">
             <plugin>franka_ign_ros2_control/IgnitionSystem</plugin>
+          </xacro:if>
+
+          <!-- ADDITION FOR ISAAC SIM -->
+          <xacro:if value="${isaac}">
+            <plugin>topic_based_ros2_control/TopicBasedSystem</plugin>
+            <xacro:if value="${namespace == ''}">
+              <param name="joint_commands_topic">/isaac_joint_commands</param>
+              <param name="joint_states_topic">/isaac_joint_states</param>
+            </xacro:if>
+            <xacro:if value="${namespace != ''}">
+              <param name="joint_commands_topic">/${namespace}/isaac_joint_commands</param>
+              <param name="joint_states_topic">/${namespace}/isaac_joint_states</param>
+            </xacro:if>
           </xacro:if>
 
           <xacro:if value="${use_fake_hardware == 0 and gazebo == 0}">
@@ -52,9 +67,12 @@
           <state_interface name="position">
             <param name="initial_value">${initial_position}</param>
           </state_interface>
-          <state_interface name="velocity"/>
+          <state_interface name="velocity">
             <param name="initial_value">0.0</param>
-          <state_interface name="effort"/>
+          </state_interface>
+          <state_interface name="effort">
+            <param name="initial value">0.0</param>
+          </state_interface>
         </joint>
       </xacro:macro>
 
@@ -70,35 +88,35 @@
         <xacro:configure_joint joint_name="${arm_id}_finger_joint1" initial_position="0.0" />
       </xacro:if>
 
+      <xacro:unless value="${isaac}">
+        <xacro:macro name="general_purpose_io" params="prefix command_interface index">
+          <gpio name="${prefix}">
+            <command_interface name="${command_interface}"/>
+            <param name="index">${index}</param>
+          </gpio>
+        </xacro:macro>
 
-      <xacro:macro name="general_purpose_io" params="prefix command_interface index">
-        <gpio name="${prefix}">
-          <command_interface name="${command_interface}"/>
-          <param name="index">${index}</param>
-        </gpio>
-      </xacro:macro>
+        <!-- Cartesian velocity interfaces -->
+        <xacro:general_purpose_io prefix="vx" command_interface="cartesian_velocity" index="0"/>
+        <xacro:general_purpose_io prefix="vy" command_interface="cartesian_velocity" index="1"/>
+        <xacro:general_purpose_io prefix="vz" command_interface="cartesian_velocity" index="2"/>
+        <xacro:general_purpose_io prefix="wx" command_interface="cartesian_velocity" index="3"/>
+        <xacro:general_purpose_io prefix="wy" command_interface="cartesian_velocity" index="4"/>
+        <xacro:general_purpose_io prefix="wz" command_interface="cartesian_velocity" index="5"/>
 
-      <!-- Cartesian velocity interfaces -->
-      <xacro:general_purpose_io prefix="vx" command_interface="cartesian_velocity" index="0"/>
-      <xacro:general_purpose_io prefix="vy" command_interface="cartesian_velocity" index="1"/>
-      <xacro:general_purpose_io prefix="vz" command_interface="cartesian_velocity" index="2"/>
-      <xacro:general_purpose_io prefix="wx" command_interface="cartesian_velocity" index="3"/>
-      <xacro:general_purpose_io prefix="wy" command_interface="cartesian_velocity" index="4"/>
-      <xacro:general_purpose_io prefix="wz" command_interface="cartesian_velocity" index="5"/>
+        <!-- Cartesian pose interfaces, in total 16 interfaces -->
+        <xacro:macro name="loop" params="i">
+          <xacro:unless value="${i == 16}">
+            <xacro:general_purpose_io prefix="${i}" command_interface="cartesian_pose_command" index="${i}"/>
+            <xacro:loop i="${i+1}"/>
+          </xacro:unless>
+        </xacro:macro>
+        <xacro:loop i="0"/>
 
-      <!-- Cartesian pose interfaces, in total 16 interfaces -->
-      <xacro:macro name="loop" params="i">
-        <xacro:unless value="${i == 16}">
-          <xacro:general_purpose_io prefix="${i}" command_interface="cartesian_pose_command" index="${i}"/>
-          <xacro:loop i="${i+1}"/>
-        </xacro:unless>
-      </xacro:macro>
-      <xacro:loop i="0"/>
-
-      <!-- Elbow command interfaces -->
-      <xacro:general_purpose_io prefix="joint_3_position" command_interface="elbow_command" index="0"/>
-      <xacro:general_purpose_io prefix="joint_4_sign" command_interface="elbow_command" index="1"/>
-
+        <!-- Elbow command interfaces -->
+        <xacro:general_purpose_io prefix="joint_3_position" command_interface="elbow_command" index="0"/>
+        <xacro:general_purpose_io prefix="joint_4_sign" command_interface="elbow_command" index="1"/>
+      </xacro:unless>
 
     </ros2_control>
     <xacro:if value="${gazebo}">

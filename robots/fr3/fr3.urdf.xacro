@@ -58,6 +58,9 @@
   <!-- Should the robot be spawned in Gazebo?" -->
   <xacro:arg name="gazebo" default="false" />
 
+  <!-- Enable Topic Based ROS2 Control communication with Isaac Sim? -->
+  <xacro:arg name="isaac" default="false" />
+
   <!-- Should the robot be spawned in Gazebo with effort interfaces?" -->
   <xacro:arg name="gazebo_effort" default="false" />
 
@@ -74,6 +77,7 @@
                       kinematics="${xacro.load_yaml('$(find franka_description)/robots/fr3/kinematics.yaml')}"
                       dynamics="${xacro.load_yaml('$(find franka_description)/robots/fr3/dynamics.yaml')}"
                       gazebo="$(arg gazebo)"
+                      isaac="$(arg isaac)"
                       hand="$(arg hand)"
                       ee_id="$(arg ee_id)"
                       special_connection="$(arg special_connection)"
