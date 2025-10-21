@@ -46,6 +46,9 @@
   <!-- Is the robot being controlled with ros2_control?" -->
   <xacro:arg name="ros2_control" default="false" />
 
+  <!-- Namespace for the robot nodes and topics -->
+   <xacro:arg name="namespace" default="" />
+
   <!-- IP address or hostname of the robot" -->
   <xacro:arg name="robot_ip" default="" />
 
@@ -78,6 +81,7 @@
                       dynamics="${xacro.load_yaml('$(find franka_description)/robots/fr3/dynamics.yaml')}"
                       gazebo="$(arg gazebo)"
                       isaac="$(arg isaac)"
+                      namespace="$(arg namespace)"
                       hand="$(arg hand)"
                       ee_id="$(arg ee_id)"
                       special_connection="$(arg special_connection)"

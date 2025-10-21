@@ -8,7 +8,7 @@
                  fake_sensor_commands:=false
                  gazebo:=false
                  isaac:=false
-                 namespace:=franka_ns
+                 namespace:=''
                  hand:=false
                  gazebo_effort:=false
                  arm_prefix:=''">
@@ -37,6 +37,8 @@
               <param name="joint_states_topic">/isaac_joint_states</param>
             </xacro:if>
             <xacro:if value="${namespace != ''}">
+              <!-- <param name="joint_commands_topic" value="/${namespace}/isaac_joint_commands" />
+              <param name="joint_states_topic" value="/${namespace}/isaac_joint_states"/> -->
               <param name="joint_commands_topic">/${namespace}/isaac_joint_commands</param>
               <param name="joint_states_topic">/${namespace}/isaac_joint_states</param>
             </xacro:if>
