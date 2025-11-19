@@ -109,6 +109,23 @@
     </collision>
   </xacro:macro>
 
+  <!-- Added from original humation file: -->
+  <xacro:macro name="collision_rectangle" params="size:='0 0 0' xyz:='0 0 0' direction:='z'">
+    <xacro:property name="roll" value="${pi/2.0 if 'y' in direction else 0}" />
+    <xacro:property name="pitch" value="${pi/2.0 if 'x' in direction else 0}" />
+    <xacro:property name="yaw" value="0" />
+    <xacro:property name="x" value="${xyz.split(' ')[0]}" />
+    <xacro:property name="y" value="${xyz.split(' ')[1]}" />
+    <xacro:property name="z" value="${xyz.split(' ')[2]}" />
+
+    <collision>
+      <origin xyz="${x} ${y} ${z}" rpy="${roll} ${pitch} ${yaw}"/>
+      <geometry>
+        <box size="${size}" />
+      </geometry>
+    </collision>
+  </xacro:macro>
+
   <!-- ========================================================== -->
   <!-- Adds the required tags to simulate one joint in gazebo     -->
   <!--                                                            -->

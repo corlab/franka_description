@@ -32,13 +32,16 @@
   <xacro:arg name="rpy_ee" default= "0 0 ${-pi/4}" />
 
   <!-- Position offset between ee frame and tcp frame -->
-  <xacro:arg name="tcp_xyz" default="0 0 0.1034" />
+  <!-- default was 0 0 0.1034, but this was changed in the original humation package so I adjusted it. -->
+  <xacro:arg name="tcp_xyz" default="0 0 0.0934" /> 
 
   <!-- Rotation offset between ee frame and tcp frame -->
   <xacro:arg name="tcp_rpy" default="0 0 0" />
 
   <!-- Safety distance for the collision capsules -->
-  <xacro:arg name="safety_distance" default="0.03" />
+  <!-- originally this was 0.03! (Changed because the original humation package had this value) -->
+  <!-- TODO: If something goes wrong: The original humation package also defined a seperate safety_distance for the end effector that was ignored here! -->
+  <xacro:arg name="safety_distance" default="0.02" />
 
   <!-- Should self-collision be enabled? -->
   <xacro:arg name="with_sc" default="false" />
@@ -101,5 +104,8 @@
                       description_pkg="$(arg description_pkg)"
                       connected_to= "base">
   </xacro:franka_robot>
+
+  <!-- Humation environment! -->
+  <xacro:include filename="$(find franka_description)/environment/environment.urdf"/>
 
 </robot>
