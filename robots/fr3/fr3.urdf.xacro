@@ -106,8 +106,8 @@
   </xacro:franka_robot>
 
   <!-- Humation environment! -->
-  <xacro:unless value="${namespace == ''}">
-    <xacro:include filename="$(find franka_description)/environment/${namespace}_environment.urdf"/>
+  <xacro:unless value="${'$(arg namespace)' == ''}">
+    <xacro:include filename="$(find franka_description)/environment/$(arg namespace)_environment.urdf"/>
   </xacro:unless>
 
 </robot>
