@@ -44,7 +44,7 @@
   
     <joint name="world_environment_joint" type="fixed">
      <origin rpy="0 0 1.5707" xyz="0.40 -0.115 -0.01"/>
-    <parent link="fr3_link0"/>
+    <parent link="franka_fr3_link0"/>
     <child link="environment"/>
     </joint>
 
@@ -64,4 +64,3 @@
     </joint-->
 
 </robot>
-
